@@ -7,7 +7,12 @@ Things that have been changed:
 
 - Disabled the create_css, haven't change them yet.
 - Added the CSS files to Github instead.
+- Added Author and Updated on each posts
 - Changed &lt;hr&gt; to &lt;readmore&gt; for "Read more", easier to remember (personal touch).
+
+Things that doesn't work perfectly:
+-
+- Updated will change to todays date when doing rebuild
 
 
 For more information, please visit [Carlos Fenollosa's](https://github.com/cfenollosa/bashblog) Github.
