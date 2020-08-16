@@ -1,6 +1,7 @@
 Bashblog
 ========
-Slightly modified script with personal touch.
+Slightly modified script with personal touch.  
+For more information about the script, please visit [Carlos Fenollosa's](https://github.com/cfenollosa/bashblog) Github.
 
 Things that have been changed:
 --------
@@ -10,17 +11,15 @@ Things that have been changed:
 - Added Author and Updated on each posts
 - Changed &lt;hr&gt; to &lt;readmore&gt; for "Read more", easier to remember (personal touch).
 
-Things that doesn't work perfectly:
+Things that works, but not perfectly:
 -
-- Updated will change to todays date when doing rebuild
+- Updated on posts will change to today's date when doing rebuild
 
-
-For more information, please visit [Carlos Fenollosa's](https://github.com/cfenollosa/bashblog) Github.
 
 [![demo](https://raw.githubusercontent.com/Dahlis/bashblog/master/preview.png)](https://raw.githubusercontent.com/Dahlis/bashblog/master/preview.png)
 
 License
--------
+--
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
