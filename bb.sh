@@ -457,19 +457,17 @@ create_html_page() {
             echo "$title"
             echo '</a></h3>'
             if [[ -z $timestamp ]]; then
-                echo "<!-- $date_inpost: #$(LC_ALL=$date_locale date +"$date_format_timestamp")# -->"
+                # After posting new post
+                echo -n "<div class=\"subtitle\">Date: $(LC_ALL=$date_locale date +"$date_format")<br>"
+                echo -n "<u>Author: $global_author</u>"
             else
-                echo "<!-- $date_inpost: #$(LC_ALL=$date_locale date +"$date_format_timestamp" --date="$timestamp")# -->"
+                # After updating or use rebuild
+                echo -n "<div class=\"subtitle\">Date: $(LC_ALL=$date_locale date +"$date_format" --date="$timestamp")<br>"
+                echo -n "Author: $global_author<br>"
+                echo -n "<!-- 'Updated' will change to todays date if you do "rebuild" -->"
+                echo -n "<u>Updated: $(LC_ALL=$date_locale date +"$date_format")</u>"
             fi
-            if [[ -z $timestamp ]]; then
-                echo -n "<div class=\"subtitle\">$(LC_ALL=$date_locale date +"$date_format")"
-            else
-                echo -n "<div class=\"subtitle\">$(LC_ALL=$date_locale date +"$date_format" --date="$timestamp")"
-            fi
-            #echo "<br>"
-            #[[ -n $author ]] && echo -e "\n$author"
-            #[[ -n $author ]] && echo -e " &mdash; \n$author"
-            #echo "$global_author"
+	    
             echo "</div>"
             echo '<!-- text begin -->' # This marks the text body, after the title, date...
         fi
