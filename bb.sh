@@ -112,7 +112,7 @@ global_variables() {
     template_read_more="Read more [...]"
     # template_read_more="Read more..."
     # "View more posts" (used on bottom of index page as link to archive)
-    template_archive="View the archive"
+    template_archive="Archive"
     # "All posts" (title of archive page)
     template_archive_title="Archive"
     # "All tags"
@@ -432,30 +432,38 @@ create_html_page() {
         echo "<title>$title</title>"
         google_analytics
         twitter_card "$content" "$title"
-        echo "</head><body>"
+	echo "</head>"
+        echo "<body>"
         # stuff to add before the actual body content
         [[ -n $body_begin_file ]] && cat "$body_begin_file"
         # body divs
         echo '<div id="divbodyholder">'
-        echo '<div class="headerholder"><div class="header">'
+        echo '<div class="headerholder">'
+	echo '<div class="header">'
         # blog title
-        echo '<div id="title">'
+        echo '<div class="title">'
         cat .title.html
-        echo "<!-- title, header, headerholder -->"
+        echo '<!-- class="headerholder", "header", "title" -->'
         echo '</div></div></div>' # title, header, headerholder
-        echo '<div id="divbody"><div class="content">'
+        echo '<div id="divbody">'
+	echo '<div class="content">'
 
         file_url=${filename#./}
         file_url=${file_url%.rebuilt} # Get the correct URL when rebuilding
         # one blog entry
         if [[ $index == no ]]; then
             echo '<!-- entry begin -->' # marks the beginning of the whole post
-            echo "<div id=\"blogcontent\"><h3><a class=\"ablack\" href=\"$file_url\">"
+            echo "<h3><a class=\"ablack\" href=\"$file_url\">"
             # remove possible <p>'s on the title because of markdown conversion
             title=${title//<p>/}
             title=${title//<\/p>/}
             echo "$title"
             echo '</a></h3>'
+            if [[ -z $timestamp ]]; then
+		echo "<!-- $date_inpost: #$(LC_ALL=$date_locale date +"$date_format_timestamp")# -->"
+            else
+                echo "<!-- $date_inpost: #$(LC_ALL=$date_locale date +"$date_format_timestamp" --date="$timestamp")# -->"
+            fi
             if [[ -z $timestamp ]]; then
                 # After posting new post
                 echo -n "<div class=\"subtitle\">Date: $(LC_ALL=$date_locale date +"$date_format")<br>"
@@ -467,20 +475,21 @@ create_html_page() {
                 echo -n "<!-- 'Updated' will change to todays date if you do "rebuild" -->"
                 echo -n "<u>Updated: $(LC_ALL=$date_locale date +"$date_format")</u>"
             fi
-	    
             echo "</div>"
             echo '<!-- text begin -->' # This marks the text body, after the title, date...
         fi
         cat "$content" # Actual content
         if [[ $index == no ]]; then
-            echo -e '\n<!-- text end --></div>'
+            echo -e '\n<!-- text end -->'
+            echo -e '<div class="divider"></div>'
 
             twitter "$global_url/$file_url"
 
             echo '<!-- entry end -->' # absolute end of the post
+	    echo '</div>' # content
         fi
 
-        echo '</div>' # content
+        #echo '</div>' # content
 
         # Add disqus commments except for index and all_posts pages
         [[ $index == no ]] && disqus_body
@@ -491,7 +500,8 @@ create_html_page() {
         echo '</div></div>' # divbody and divbodyholder
         disqus_footer
         [[ -n $body_end_file ]] && cat "$body_end_file"
-        echo '</body></html>'
+        echo '</body>'
+        echo '</html>'
     } > "$filename"
 }
 
@@ -650,6 +660,7 @@ all_posts() {
 
     {
         echo "<h3 class='white'>$template_archive_title</h3>"
+	echo "<ol reversed>"
         prev_month=""
         while IFS='' read -r i; do
             is_boilerplate_file "$i" && continue
@@ -669,6 +680,7 @@ all_posts() {
             echo " $date</li>"
         done < <(ls -t ./*.html)
         echo "" 1>&3
+	echo "</ol>"
     } 3>&1 >"$contentfile"
 
     create_html_page "$contentfile" "$archive_index.tmp" yes "$global_title &mdash; $template_archive_title" "$global_author"
@@ -688,7 +700,6 @@ all_tags() {
     {
         echo "<h3 class='white'>$template_tags_title</h3>"
         echo "<h4 class='allposts_header'></h4>"
-        #echo "<ul>"
         for i in $prefix_tags*.html; do
             [[ -f "$i" ]] || break
             echo -n "." 1>&3
@@ -703,8 +714,6 @@ all_tags() {
             echo "<li><a href=\"$i\">$tagname</a> &mdash; $nposts $word</li>"
         done
         echo "" 1>&3
-        #echo "</ul>"
-        #echo "<div id=\"all_posts\"><a href=\"./$index_file\">$template_archive_index_page</a></div>"
     } 3>&1 > "$contentfile"
 
     create_html_page "$contentfile" "$tags_index.tmp" yes "$global_title &mdash; $template_tags_title" "$global_author"
@@ -1053,7 +1062,7 @@ reset() {
         rm .*.html ./*.html ./*.rss &> /dev/null
         echo
         echo "Deleted all posts, stylesheets and feeds."
-        echo "Kept your old '.backup.tar.gz' just in case, please delete it manually if needed."
+        echo "Kept your old 'backup.tar.gz' just in case, please delete it manually if needed."
     else
         echo "Phew! You dodged a bullet there. Nothing was modified."
     fi
@@ -1124,16 +1133,16 @@ do_main() {
     # Test for existing html files
     if ls ./*.html &> /dev/null; then
         # We're going to back up just in case
-        tar -c -z -f ".backup.tar.gz" -- *.html &&
-            chmod 600 ".backup.tar.gz"
+        tar -c -z -f "backup.tar.gz" -- *.html &&
+            chmod 600 "backup.tar.gz"
     elif [[ $1 == rebuild ]]; then
         echo "Can't find any html files, nothing to rebuild"
         exit
     fi
 
     # Keep first backup of this day containing yesterday's version of the blog
-    [[ ! -f .yesterday.tar.gz || $(date -r .yesterday.tar.gz +'%d') != "$(date +'%d')" ]] &&
-        cp .backup.tar.gz .yesterday.tar.gz &> /dev/null
+    [[ ! -f yesterday.tar.gz || $(date -r yesterday.tar.gz +'%d') != "$(date +'%d')" ]] &&
+        cp backup.tar.gz yesterday.tar.gz &> /dev/null
 
     [[ $1 == reset ]] &&
         reset && exit
