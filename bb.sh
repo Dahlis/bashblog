@@ -467,11 +467,11 @@ create_html_page() {
             if [[ -z $timestamp ]]; then
                 # After posting new post
                 echo -n "<div class=\"subtitle\">Date: $(LC_ALL=$date_locale date +"$date_format")<br>"
-                echo -n "<u>Author: $global_author</u>"
+                echo -n "<u>By: $global_author</u>"
             else
                 # After updating or use rebuild
                 echo -n "<div class=\"subtitle\">Date: $(LC_ALL=$date_locale date +"$date_format" --date="$timestamp")<br>"
-                echo -n "Author: $global_author<br>"
+                echo -n "By: $global_author<br>"
                 echo -n "<!-- 'Updated' will change to todays date if you do "rebuild" -->"
                 echo -n "<u>Updated: $(LC_ALL=$date_locale date +"$date_format")</u>"
             fi
