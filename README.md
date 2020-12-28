@@ -8,12 +8,7 @@ Things that have been changed:
 
 - Disabled the create_css, haven't change them yet.
 - Added the CSS files to Github instead.
-- Added Author and Updated on each posts
 - Changed &lt;hr&gt; to &lt;readmore&gt; for "Read more", easier to remember (personal touch).
-
-Things that works, but not perfectly:
--
-- Updated on posts will change to today's date when doing rebuild
 
 
 [![demo](https://raw.githubusercontent.com/Dahlis/bashblog/master/preview.png)](https://raw.githubusercontent.com/Dahlis/bashblog/master/preview.png)
