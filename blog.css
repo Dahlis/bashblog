@@ -1,21 +1,17 @@
 .title {
-  /*height: 120px;*/
   text-align: center;
   margin-bottom: 50px;
 }
 
 .nomargin {
+  font-family: 'Dancing Script', cursive;
   margin:0;
-  font-size: 60px;
-  color: #ebebeb;
-}
-
-#blogcontent {
-  margin-bottom: 70px;
+  font-size: 70px;
+  color: #9e9e9e;
 }
 
 a.ablack {
-  color:#ebebeb;
+  color: #984040;
   text-decoration: none;
 }
 
@@ -29,28 +25,22 @@ a.ablack {
 }
 
 .subtitle {
-  font-size:12px;
-  /*padding-top: 3px;*/
-  /*margin-bottom: -18px;*/
-  height: 55px;
+  font-size: 15px;
+  text-align: center;
 }
 
 .content p {
   margin-left:24px;
   margin-right:24px;
-  font-size:17px;
+  font-size:20px;
   display: block;
   margin-block-start: 1em;
   margin-block-end: 1em;
   margin-inline-start: 0px;
   margin-inline-end: 0px;
-  text-align: justify;
-  text-justify: inter-word;
-  margin-top: 0;
 }
 
 .allposts_header {
-  color: #ebebeb;
   margin-bottom: 0;
   font-size: 20px;
   font-weight: 200;
@@ -72,17 +62,11 @@ iframe {
   font-size:14px;
 }
 
-.photocredit {
-  font-size: 14px;
-  text-align: right;
-  font-style: italic;
-  display:block;
-}
-
 .readmore {
   font-style: italic;
 }
 
 .readmore a {
   text-decoration: none;
+  color: #9e9e9e;
 }

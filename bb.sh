@@ -14,27 +14,31 @@
 global_config=".config"
 
 # This function will load all the variables defined here. They might be overridden
-# by the 'global_config' file contents
+# by the 'global_config' file contents.
+
+# Modified by Nicklas Dahlgren
+# https://github.com/Dahlis
+
 global_variables() {
-    global_software_name="BashBlog modified by Nicklas Dahlgren"
+    global_software_name="BashBlog"
     global_software_version="2.9"
 
     # Blog title
-    global_title="My fancy blog"
+    global_title="My fance blog"
     # The typical subtitle for each blog
-    global_description="A blog about turtles and carrots"
+    global_description="A blog about turtles and carrots."
     # The public base URL for this blog
     global_url=""
 
     # Your name
     global_author="John Smith"
     # You can use twitter or facebook or anything for global_author_url
-    global_author_url="http://twitter.com/example"
+    global_author_url="http://twitter.com/#"
     # Your email
     global_email="john@smith.com"
 
     # CC by-nc-nd is a good starting point, you can change this to "&copy;" for Copyright
-    global_license="Copyright &copy; 2020"
+    global_license="CC by-nc-nd"
 
     # If you have a Google Analytics ID (UA-XXXXX) and wish to use the standard
     # embedding code, put it on global_analytics
@@ -92,7 +96,7 @@ global_variables() {
     # DO NOT name them .header.html, .footer.html or they will be overwritten
     # leave blank to generate them, recommended
     header_file=""
-    footer_file=""
+    #footer_file=""
     # extra content to add just after we open the <body> tag
     # and before the actual blog content
     body_begin_file=""
@@ -167,9 +171,9 @@ global_variables_check() {
     [[ $header_file == .header.html ]] &&
         echo "Please check your configuration. '.header.html' is not a valid value for the setting 'header_file'" &&
         exit
-    [[ $footer_file == .footer.html ]] &&
-        echo "Please check your configuration. '.footer.html' is not a valid value for the setting 'footer_file'" &&
-        exit
+    #[[ $footer_file == .footer.html ]] &&
+    #    echo "Please check your configuration. '.footer.html' is not a valid value for the setting 'footer_file'" &&
+    #    exit
 }
 
 
@@ -395,7 +399,8 @@ is_boilerplate_file() {
     done
 
     case $name in
-    ( "$index_file" | "$archive_index" | "$tags_index" | "$footer_file" | "$header_file" | "$global_analytics_file" | "$prefix_tags"* )
+    #( "$index_file" | "$archive_index" | "$tags_index" | "$footer_file" | "$header_file" | "$global_analytics_file" | "$prefix_tags"* )
+    ( "$index_file" | "$archive_index" | "$tags_index" | "$header_file" | "$global_analytics_file" | "$prefix_tags"* )
         return 0 ;;
     ( * ) # Check for excluded
         for excl in "${html_exclude[@]}"; do
@@ -432,21 +437,21 @@ create_html_page() {
         echo "<title>$title</title>"
         google_analytics
         twitter_card "$content" "$title"
-	echo "</head>"
+        echo "</head>"
         echo "<body>"
         # stuff to add before the actual body content
         [[ -n $body_begin_file ]] && cat "$body_begin_file"
         # body divs
         echo '<div id="divbodyholder">'
         echo '<div class="headerholder">'
-	echo '<div class="header">'
+        echo '<div class="header">'
         # blog title
         echo '<div class="title">'
         cat .title.html
         echo '<!-- class="headerholder", "header", "title" -->'
         echo '</div></div></div>' # title, header, headerholder
         echo '<div id="divbody">'
-	echo '<div class="content">'
+        echo '<div class="content">'
 
         file_url=${filename#./}
         file_url=${file_url%.rebuilt} # Get the correct URL when rebuilding
@@ -460,21 +465,18 @@ create_html_page() {
             echo "$title"
             echo '</a></h3>'
             if [[ -z $timestamp ]]; then
-		echo "<!-- $date_inpost: #$(LC_ALL=$date_locale date +"$date_format_timestamp")# -->"
+                echo "<!-- $date_inpost: #$(LC_ALL=$date_locale date +"$date_format_timestamp")# -->"
             else
                 echo "<!-- $date_inpost: #$(LC_ALL=$date_locale date +"$date_format_timestamp" --date="$timestamp")# -->"
             fi
             if [[ -z $timestamp ]]; then
                 # After posting new post
-                echo -n "<div class=\"subtitle\">Date: $(LC_ALL=$date_locale date +"$date_format")<br>"
-                echo -n "<u>By: $global_author</u>"
+                echo -n "<div class=\"subtitle\">$(LC_ALL=$date_locale date +"$date_format") By $global_author"
             else
                 # After updating or use rebuild
-                echo -n "<div class=\"subtitle\">Date: $(LC_ALL=$date_locale date +"$date_format" --date="$timestamp")<br>"
-                echo -n "By: $global_author<br>"
-                echo -n "<!-- 'Updated' will change to todays date if you do "rebuild" -->"
-                echo -n "<u>Updated: $(LC_ALL=$date_locale date +"$date_format")</u>"
+                echo -n "<div class=\"subtitle\">$(LC_ALL=$date_locale date +"$date_format" --date="$timestamp") By $global_author"
             fi
+
             echo "</div>"
             echo '<!-- text begin -->' # This marks the text body, after the title, date...
         fi
@@ -486,7 +488,7 @@ create_html_page() {
             twitter "$global_url/$file_url"
 
             echo '<!-- entry end -->' # absolute end of the post
-	    echo '</div>' # content
+            echo '</div>' # content
         fi
 
         #echo '</div>' # content
@@ -495,7 +497,7 @@ create_html_page() {
         [[ $index == no ]] && disqus_body
 
         # page footer
-        cat .footer.html
+        #cat .footer.html
         # close divs
         echo '</div></div>' # divbody and divbodyholder
         disqus_footer
@@ -660,7 +662,7 @@ all_posts() {
 
     {
         echo "<h3 class='white'>$template_archive_title</h3>"
-	echo "<ol reversed>"
+        echo "<ol reversed>"
         prev_month=""
         while IFS='' read -r i; do
             is_boilerplate_file "$i" && continue
@@ -680,7 +682,7 @@ all_posts() {
             echo " $date</li>"
         done < <(ls -t ./*.html)
         echo "" 1>&3
-	echo "</ol>"
+        echo "</ol>"
     } 3>&1 >"$contentfile"
 
     create_html_page "$contentfile" "$archive_index.tmp" yes "$global_title &mdash; $template_archive_title" "$global_author"
@@ -750,7 +752,6 @@ rebuild_index() {
         feed=$blog_feed
         if [[ -n $global_feedburner ]]; then feed=$global_feedburner; fi
         echo "<div id=\"all_posts\"><a href=\"$archive_index\">$template_archive</a> &mdash; <a href=\"$tags_index\">$template_tags_title</a> &mdash; <a href=\"$feed\">$template_subscribe</a></div>"
-        #echo "<div id=\"all_posts\"><a href=\"$archive_index\">$template_archive</a></div>"
     } 3>&1 >"$contentfile"
 
     echo ""
@@ -946,6 +947,7 @@ create_includes() {
       <a href=\"#\">Placeholder</a>
       <a href=\"#\">Placeholder</a>
       <a href=\"#\">Placeholder</a>
+      <a href=\"#\">Placeholder</a>
       </div>"
       echo "<!-- Nav ends here -->"
     } > ".title.html"
@@ -960,20 +962,21 @@ create_includes() {
         echo '<link rel="stylesheet" href="main.css" type="text/css" />'
         echo '<link rel="stylesheet" href="blog.css" type="text/css" />'
         echo '<link rel="stylesheet" href="img.css" type="text/css" />'
+        echo '<link rel="icon" href="favicon.ico" type="image/x-icon" />'
         } > ".header.html"
     fi
 
-    if [[ -f $footer_file ]]; then cp "$footer_file" .footer.html
-    else {
-        echo "<div id=\"footer\">$global_license<br/>"
-	echo "Generated with modified <a href=\"https://github.com/dahlis/bashblog\" target=\"_blank\">BashBlog</a></div>"
-        } >> ".footer.html"
-    fi
+    #if [[ -f $footer_file ]]; then cp "$footer_file" .footer.html
+    #else {
+    #    echo "<div id=\"footer\">$global_license</div>"
+    #    } >> ".footer.html"
+    #fi
 }
 
 # Delete the temporarily generated include files
 delete_includes() {
-    rm ".title.html" ".footer.html" ".header.html"
+    #rm ".title.html" ".footer.html" ".header.html"
+    rm ".title.html" ".header.html"
 }
 
 
